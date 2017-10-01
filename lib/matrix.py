@@ -1,3 +1,6 @@
+from fractions import Fraction
+
+
 class Matrix:
     """
     행렬을 나타내는 클래스.
@@ -34,11 +37,18 @@ class Matrix:
             self.rows.append([])
 
             for c in r:
-                if type(c) is not int:
-                    raise Exception('matrix must consist of intergers')
-                self.rows[-1].append(c)
-                self.nr_max_width = len(str(self.rows[-1][-1])) \
-                    if self.nr_max_width is None or len(str(self.rows[-1][-1])) > self.nr_max_width \
+                if type(c) is not int and type(c) is not Fraction:
+                    raise Exception('matrix must consist of integers or fractions')
+
+                if type(c) is int:
+                    new_elem = Fraction(c, 1)
+                else:  # Fraction
+                    new_elem = Fraction(c)
+
+                self.rows[-1].append(new_elem)
+                len_new_elem = len(str(new_elem.numerator) + '/' + str(new_elem.denominator))
+                self.nr_max_width = len_new_elem \
+                    if self.nr_max_width is None or len_new_elem > self.nr_max_width \
                     else self.nr_max_width
 
         self.nr_row = len(self.rows)
@@ -48,10 +58,17 @@ class Matrix:
         행렬 전체를 출력한다.
         """
 
-        form_str = '{:' + str(self.nr_max_width) + 'd}'
+        form_str = '{:' + str(self.nr_max_width) + 's}'
+
         for r in self.rows:
             for c in r:
-                print(form_str.format(c), end='  ')
+                if c.denominator == 1:
+                    printed_str = str(c.numerator)
+                else:
+                    printed_str = str(c.numerator) + '/' + str(c.denominator)
+
+                print(form_str.format(printed_str), end='  ')
+
             print('')
 
     def to_reduced_row_echelon_form(self):
