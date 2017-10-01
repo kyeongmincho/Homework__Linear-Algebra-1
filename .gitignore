@@ -100,3 +100,6 @@ ENV/
 
 # Pycharm project settings
 .idea/
+
+# Mac OS X stuff
+.DS_Store
